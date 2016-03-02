@@ -16,8 +16,6 @@ namespace WindowsFormsApplication5
         private BufferedGraphics backBuffer;
         private DateTime endTime;
         private float deltaTime;
-        
-        private delegate void MyThread(Vector2 postion);
 
         public static List<Collider> Colliders { get; } = new List<Collider>();
         public static List<GameObject> Objects { get; } = new List<GameObject>();
