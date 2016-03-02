@@ -67,6 +67,7 @@
     <Compile Include="SpriteRender.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Vector2.cs" />
+    <Compile Include="Worker.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

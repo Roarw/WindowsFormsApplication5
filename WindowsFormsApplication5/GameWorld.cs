@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -15,6 +16,8 @@ namespace WindowsFormsApplication5
         private BufferedGraphics backBuffer;
         private DateTime endTime;
         private float deltaTime;
+        
+        private delegate void MyThread(Vector2 postion);
 
         public static List<Collider> Colliders { get; } = new List<Collider>();
         public static List<GameObject> Objects { get; } = new List<GameObject>();
@@ -30,8 +33,9 @@ namespace WindowsFormsApplication5
         /// Runs the setup, instantiate lists etc. Puts all the information into the lists/arrays.
         public void SetupWorld()
         {
-            CSObject(new Vector2(10, 100));
-            CSObject(new Vector2(0, 0));
+            new Thread(() => CSObject(new Vector2(0, 0))).Start();
+
+            new Thread(() => CSObject(new Vector2(50, 50))).Start();
         }
 
         private void CSObject(Vector2 position)
@@ -43,7 +47,7 @@ namespace WindowsFormsApplication5
             ///Animator and a component setting up animations are neccesary to make the Animator work.
             ///And the order which they are to be added is: Animator -> Component, to make the animator work.
             object1.AddComponent(new Animator(object1));
-            object1.AddComponent(new AnimatedThing(object1));
+            object1.AddComponent(new Worker(object1));
 
             object1.LoadContent();
             Objects.Add(object1);
