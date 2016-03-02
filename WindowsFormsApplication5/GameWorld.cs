@@ -31,9 +31,7 @@ namespace WindowsFormsApplication5
         /// Runs the setup, instantiate lists etc. Puts all the information into the lists/arrays.
         public void SetupWorld()
         {
-            new Thread(() => CSObject(new Vector2(0, 0))).Start();
-
-            new Thread(() => CSObject(new Vector2(50, 50))).Start();
+            CSObject(new Vector2(0, 0));
         }
 
         private void CSObject(Vector2 position)
@@ -59,12 +57,12 @@ namespace WindowsFormsApplication5
             int milliseconds = timeSpan.Milliseconds > 0 ? timeSpan.Milliseconds : 1;
             deltaTime = 1000 / milliseconds;
             endTime = DateTime.Now;
-
-            Update(deltaTime);
+            
+            Update();
             Draw();
         }
 
-        private void Update(float deltaTime)
+        private void Update()
         {
             foreach (GameObject go in Objects)
             {
