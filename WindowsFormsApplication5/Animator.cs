@@ -8,7 +8,10 @@ namespace WindowsFormsApplication5
 {
     enum AnimationName
     {
-        Standard
+        None,
+        Standard,
+        Left,
+        Right
     }
 
     class Animator: Component, ILoadable, IUpdateable
@@ -27,6 +30,7 @@ namespace WindowsFormsApplication5
         public Animator(GameObject gameObject) : base(gameObject)
         {
             this.animations = new Dictionary<AnimationName, Animation>();
+            
         }
 
         public void LoadContent()
@@ -37,7 +41,7 @@ namespace WindowsFormsApplication5
         public void Update(float deltaTime)
         {
             rectangles = animations[animationName].Rectangles;
-            timeElapsed += deltaTime;
+            timeElapsed += deltaTime / 1000;
             currentIndex = (int)(timeElapsed * fps);
 
             if (currentIndex >= rectangles.Length)
@@ -49,7 +53,12 @@ namespace WindowsFormsApplication5
             spriteRender.Rectangle = rectangles[currentIndex];
         }
 
-        public void CreateAnimation(AnimationName animationName)
+        public void CreateAnimation(AnimationName name, Animation animation)
+        {
+            animations.Add(name, animation);
+        }
+
+        public void PlayAnimation(AnimationName animationName)
         {
             if (this.animationName != animationName)
             {

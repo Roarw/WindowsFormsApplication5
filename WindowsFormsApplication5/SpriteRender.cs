@@ -31,7 +31,7 @@ namespace WindowsFormsApplication5
         public void Draw(Graphics dc)
         {
             Transform transform = (Transform)GameObject.GetComponent(Components.Transform);
-            dc.DrawImage(sprite, transform.Position.X, transform.Position.Y);
+            dc.DrawImage(sprite, transform.Position.X, transform.Position.Y, rectangle, GraphicsUnit.Pixel);
         }
     }
 }

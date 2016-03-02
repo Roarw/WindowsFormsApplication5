@@ -10,7 +10,8 @@ namespace WindowsFormsApplication5
     {
         Transform,
         SpriteRender,
-        Animator
+        Animator,
+        Collider
     }
 
     class GameObject : Component, ILoadable, IUpdateable, IDrawable

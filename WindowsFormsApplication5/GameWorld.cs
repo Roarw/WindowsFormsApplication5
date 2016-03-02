@@ -27,18 +27,23 @@ namespace WindowsFormsApplication5
             backBuffer = BufferedGraphicsManager.Current.Allocate(dc, displayRectangle);
             this.dc = backBuffer.Graphics;
         }
-        // /// Runs the setup, instantiate lists etc. Puts all the information into the lists/arrays.
+        /// Runs the setup, instantiate lists etc. Puts all the information into the lists/arrays.
         public void SetupWorld()
         {
-            CSObject(new Vector2(10, 10));
+            CSObject(new Vector2(10, 100));
             CSObject(new Vector2(0, 0));
         }
 
         private void CSObject(Vector2 position)
         {
             GameObject object1 = new GameObject(position);
-            object1.AddComponent(new SpriteRender(object1, "Orc.png", 0));
+            object1.AddComponent(new SpriteRender(object1, "Pic/spritesheet.png", 0));
             object1.AddComponent(new Collider(object1));
+
+            ///Animator and a component setting up animations are neccesary to make the Animator work.
+            ///And the order which they are to be added is: Animator -> Component, to make the animator work.
+            object1.AddComponent(new Animator(object1));
+            object1.AddComponent(new AnimatedThing(object1));
 
             object1.LoadContent();
             Objects.Add(object1);
