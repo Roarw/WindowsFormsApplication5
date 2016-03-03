@@ -12,97 +12,118 @@ namespace WindowsFormsApplication5
 {
     class GameWorld
     {
-        private static Graphics dc;
-        private static BufferedGraphics backBuffer;
         private DateTime endTime;
+        private Graphics dc;
+        private BufferedGraphics backBuffer;
+        private List<Thread> threads;
+        private Brush b;
+        private Font f;
+
         private static float deltaTime;
 
-        private static bool isLoaded;
-
-        public static List<Collider> Colliders {  get;  } = new List<Collider>();
+        public static List<Collider> Colliders { get; } = new List<Collider>();
         public static List<GameObject> Objects { get; } = new List<GameObject>();
 
         public static float DeltaTime { get { return deltaTime; } }
-        public static Graphics DC { get { return dc; } }
-        public static BufferedGraphics BackBuffer { get { return backBuffer; } }
-
-        public static bool IsLoaded { get  { return isLoaded; } }
 
         /// sets the value of the variables and properties
         /// Also runs the setupworld method
         public GameWorld(Graphics dc, Rectangle displayRectangle)
         {
             backBuffer = BufferedGraphicsManager.Current.Allocate(dc, displayRectangle);
-            GameWorld.dc = backBuffer.Graphics;
+            this.dc = backBuffer.Graphics;
+            threads = new List<Thread>();
+            b = Brushes.Gold;
+            f = new Font("Arial", 16);
         }
+
         /// Runs the setup, instantiate lists etc. Puts all the information into the lists/arrays.
         public void SetupWorld()
         {
+            CreateBankThread(new Vector2(0, 30));
+            CreateCrystalThread(new Vector2(1200, 0));
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
             {
-                CreateWorkerThread(new Vector2((100+i * 25), i * 25));
+                CreateWorkerThread(new Vector2(100 + i * 5, 15 + i * 15));
             }
-
-            MakeBank(new Vector2(0, 0));
-            MakeCrystal(new Vector2(500, 0));
-            MakeCrystal(new Vector2(500, 50));
-            MakeCrystal(new Vector2(500, 100));
-
-            Thread.Sleep(1000);
-            foreach (GameObject o in Objects)
+            
+            //Loads content.
+            foreach (GameObject go in Objects)
             {
-                o.LoadContent();
+                go.LoadContent();
             }
-            isLoaded = true;
+            foreach (Thread t in threads)
+            {
+                t.Start();
+            }
         }
-
+        
+        /// Below is our builder methods.
         private void CreateWorkerThread(Vector2 position)
         {
-            Thread t = new Thread(() => new ThreadHandler(CSObject(position)));
+            GameObject worker = WorkerBuilder(position);
+            Thread t = new Thread(() => new ThreadHandler(worker));
             t.IsBackground = true;
-            t.Start();
+            threads.Add(t);
         }
 
-        private GameObject CSObject(Vector2 position)
+        private void CreateBankThread(Vector2 position)
         {
-            GameObject object1 = new GameObject(position);
-            object1.AddComponent(new SpriteRender(object1, "Pic/spritesheet.png", 0));
-            object1.AddComponent(new Collider(object1));
+            GameObject bank = BankBuilder(position);
+            Thread t = new Thread(() => new ThreadHandler(bank));
+            t.IsBackground = true;
+            threads.Add(t);
+        }
+
+        private void CreateCrystalThread(Vector2 position)
+        {
+            GameObject crystal = CrystalBuilder(position);
+            Thread t = new Thread(() => new ThreadHandler(crystal));
+            t.IsBackground = true;
+            threads.Add(t);
+        }
+
+        private GameObject WorkerBuilder(Vector2 position)
+        {
+            GameObject go = new GameObject(position);
+            go.AddComponent(new SpriteRender(go, "Pic/spritesheet.png", 0));
+            go.AddComponent(new Collider(go));
 
             ///Animator and a component setting up animations are neccesary to make the Animator work.
             ///And the order which they are to be added is: Animator -> Component, to make the animator work.
-            object1.AddComponent(new Animator(object1));
-            object1.AddComponent(new Worker(object1));
-            
-            Objects.Add(object1);
+            go.AddComponent(new Animator(go));
+            go.AddComponent(new Worker(go));
 
-            return object1;
+            Objects.Add(go);
+            return go;
         }
 
-        private void MakeCrystal(Vector2 position)
+        private GameObject CrystalBuilder(Vector2 position)
         {
-            GameObject object1 = new GameObject(position);
-            object1.AddComponent(new SpriteRender(object1, "Pic/Minerals.png", 0));
-            object1.AddComponent(new Collider(object1));
+            GameObject go = new GameObject(position);
+            go.AddComponent(new SpriteRender(go, "Pic/Crystal.png", 0));
+            go.AddComponent(new Collider(go));
+            go.AddComponent(new Crystal(go));
 
-            object1.AddComponent(new Crystal(object1));
-            
-            Objects.Add(object1);
+            Objects.Add(go);
+            return go;
         }
 
-        private void MakeBank(Vector2 position)
+        private GameObject BankBuilder(Vector2 position)
         {
-            GameObject object1 = new GameObject(position);
-            object1.AddComponent(new SpriteRender(object1, "Pic/Nexus.png", 0));
-            object1.AddComponent(new Collider(object1));
+            GameObject go = new GameObject(position);
+            go.AddComponent(new SpriteRender(go, "Pic/Nexus.png", 0));
+            go.AddComponent(new Collider(go));
+            go.AddComponent(new Bank(go));
 
-            object1.AddComponent(new Bank(object1));
-            
-            Objects.Add(object1);
+            Objects.Add(go);
+            return go;
         }
 
-        /// Runs the draw method and reads all the button presses.
+
+
+        /// Keeps track of time and runs the draw method.
         public void GameLoop()
         {
             DateTime startTime = DateTime.Now;
@@ -111,19 +132,21 @@ namespace WindowsFormsApplication5
             deltaTime = 1000 / milliseconds;
             endTime = DateTime.Now;
 
-            //Update() is run by the threads.
+            //Update(); is called by ThreadHandler.
             Draw();
         }
 
-        ///// Draws everything in the game, and clears the screen
+        /// Draws everything in the game, and clears the screen
         private void Draw()
         {
-            dc.Clear(Color.White);
+            dc.Clear(Color.DarkOliveGreen);
 
             foreach (GameObject go in Objects)
             {
                 go.Draw(dc);
             }
+
+            dc.DrawString(Bank.Balace + "", f, b, 0, 0);
 
             backBuffer.Render();
             

@@ -7,24 +7,14 @@ using System.Threading.Tasks;
 
 namespace WindowsFormsApplication5
 {
-    class Worker : Component, ILoadable, IUpdateable
+    class Worker : Component, ILoadable, IUpdateable, ICollisionEnter
     {
         Animator animator;
         Transform transform;
-        bool gold;
-
-        public bool Gold
-        {
-            get
-            {
-                return gold;
-            }
-
-            set
-            {
-                gold = value;
-            }
-        }
+        AnimationName animationName;
+        
+        public int Gold { get; set; } = 0;
+        public bool Wait { get; set; } = false;
 
         public Worker(GameObject gameObject) : base(gameObject)
         {
@@ -36,27 +26,45 @@ namespace WindowsFormsApplication5
             animator = (Animator)gameObject.GetComponent(Components.Animator);
             transform = (Transform)gameObject.GetComponent(Components.Transform);
             CreateAnimation();
-            animator.PlayAnimation(AnimationName.Left);
+            animator.PlayAnimation(AnimationName.Standard);
         }
 
         public void Update(float deltaTime)
         {
-            if (!Gold)
+            if (Wait)
             {
-                transform.Translate(new Vector2(1, 0));
+                animationName = AnimationName.Standard;
+            }
+            else if (Gold == 0)
+            {
+                transform.Translate(new Vector2(2, 0));
+                animationName = AnimationName.Right;
+            }
+            else if (Gold > 0)
+            {
+                transform.Translate(new Vector2(-2, 0));
+                animationName = AnimationName.Left;
             }
 
-            else if (Gold)
-            {
-                transform.Translate(new Vector2(-1, 0));
-            }
+            animator.PlayAnimation(animationName);
         }
 
         private void CreateAnimation()
         {
             animator.CreateAnimation(AnimationName.Standard, new Animation(1, 0, 0, 72, 67, 0));
-            animator.CreateAnimation(AnimationName.Left, new Animation(4, 72, 0, 72, 67, 1));
-            animator.CreateAnimation(AnimationName.Right, new Animation(4, 144, 0, 72, 67, 1));
+            animator.CreateAnimation(AnimationName.Left, new Animation(4, 72, 0, 72, 67, 3));
+            animator.CreateAnimation(AnimationName.Right, new Animation(4, 144, 0, 72, 67, 3));
+        }
+
+        public void OnCollisionEnter(Collider other)
+        {
+            Bank b = (Bank)other.GameObject.GetComponent(Components.Bank);
+            Crystal c = (Crystal)other.GameObject.GetComponent(Components.Crystal);
+
+            if (b != null && Gold > 0 || c != null && Gold == 0)
+            {
+                Wait = true;
+            }
         }
     }
 }

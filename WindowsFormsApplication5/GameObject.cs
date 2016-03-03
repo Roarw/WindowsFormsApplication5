@@ -12,7 +12,11 @@ namespace WindowsFormsApplication5
         SpriteRender,
         Animator,
         Collider,
-        Worker
+
+        //Type components.
+        Worker,
+        Bank,
+        Crystal
     }
 
     class GameObject : Component, ILoadable, IUpdateable, IDrawable, ICollisionEnter
