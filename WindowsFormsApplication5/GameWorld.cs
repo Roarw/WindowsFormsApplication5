@@ -37,7 +37,7 @@ namespace WindowsFormsApplication5
 
             for (int i = 0; i < 5; i++)
             {
-                CreateWorkerThread(new Vector2(i * 25, i * 25));
+                CreateWorkerThread(new Vector2((100+i * 25), i * 25));
             }
 
             MakeBank(new Vector2(0, 0));
