@@ -34,10 +34,14 @@ namespace WindowsFormsApplication5
         /// Runs the setup, instantiate lists etc. Puts all the information into the lists/arrays.
         public void SetupWorld()
         {
+
             for (int i = 0; i < 5; i++)
             {
                 CreateWorkerThread(new Vector2(i * 25, i * 25));
             }
+
+            //MakeBank(new Vector2(0, 0));
+            //MakeCrystal(new Vector2(100, 0));
         }
 
         private void CreateWorkerThread(Vector2 position)
@@ -55,8 +59,8 @@ namespace WindowsFormsApplication5
 
             ///Animator and a component setting up animations are neccesary to make the Animator work.
             ///And the order which they are to be added is: Animator -> Component, to make the animator work.
-            object1.AddComponent(new Animator(object1));
-            object1.AddComponent(new Worker(object1));
+            //object1.AddComponent(new Animator(object1));
+            //object1.AddComponent(new Worker(object1));
 
             object1.LoadContent();
             Objects.Add(object1);
@@ -82,7 +86,7 @@ namespace WindowsFormsApplication5
             object1.AddComponent(new SpriteRender(object1, "Pic/Nexus.png", 0));
             object1.AddComponent(new Collider(object1));
 
-            object1.AddComponent(new Crystal(object1));
+            object1.AddComponent(new Bank(object1));
 
             object1.LoadContent();
             Objects.Add(object1);
