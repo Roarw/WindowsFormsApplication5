@@ -144,9 +144,12 @@ namespace WindowsFormsApplication5
         {
             dc.Clear(Color.DarkOliveGreen);
 
-            foreach (GameObject go in Objects)
-            {
-                go.Draw(dc);
+            lock (thisLock)
+            { 
+                foreach (GameObject go in Objects)
+                {
+                    go.Draw(dc);
+                }
             }
 
             dc.DrawString(Bank.Balace + "", f, b, 0, 0);
