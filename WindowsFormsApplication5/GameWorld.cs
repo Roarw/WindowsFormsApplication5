@@ -57,7 +57,8 @@ namespace WindowsFormsApplication5
         }
         
         /// Below is our builder methods.
-        private Thread CreateWorkerThread(Vector2 position)
+        /// The CreateWorkerThread is also used by the bank to create new workers.
+        public static Thread CreateWorkerThread(Vector2 position)
         {
             GameObject worker = WorkerBuilder(position);
             Thread t = new Thread(() => new TimedThreadHandler(worker));
@@ -84,7 +85,7 @@ namespace WindowsFormsApplication5
             return t;
         }
 
-        private GameObject WorkerBuilder(Vector2 position)
+        private static GameObject WorkerBuilder(Vector2 position)
         {
             GameObject go = new GameObject(position);
             go.AddComponent(new SpriteRender(go, "Pic/spritesheet.png", 0));

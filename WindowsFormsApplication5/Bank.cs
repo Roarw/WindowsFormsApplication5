@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WindowsFormsApplication5
 {
-    class Bank : Component, ICollisionEnter
+    class Bank : Component, ICollisionEnter, IUpdateable
     {
         object thisLock = new object();
         static float balance;
@@ -17,6 +17,15 @@ namespace WindowsFormsApplication5
         public Bank(GameObject gameObject) : base(gameObject)
         {
             balance = 0;
+        }
+
+        public void Update(float deltaTime)
+        {
+            if (balance > 100)
+            {
+                GameWorld.CreateWorkerThread(new Vector2(0, 0)).Start();
+                balance -= 50;
+            }
         }
 
         public void OnCollisionEnter(Collider other)
