@@ -34,7 +34,7 @@ namespace WindowsFormsApplication5
         /// Runs the setup, instantiate lists etc. Puts all the information into the lists/arrays.
         public void SetupWorld()
         {
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 5; i++)
             {
                 CreateWorkerThread(new Vector2(i * 25, i * 25));
             }
