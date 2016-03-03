@@ -12,29 +12,42 @@ namespace WindowsFormsApplication5
 {
     class GameWorld
     {
-        private Graphics dc;
-        private BufferedGraphics backBuffer;
+        private static Graphics dc;
+        private static BufferedGraphics backBuffer;
         private DateTime endTime;
-        private float deltaTime;
+        private static float deltaTime;
 
         public static List<Collider> Colliders { get; } = new List<Collider>();
         public static List<GameObject> Objects { get; } = new List<GameObject>();
+
+        public static float DeltaTime { get { return deltaTime; } }
+        public static Graphics DC { get { return dc; } }
+        public static BufferedGraphics BackBuffer { get { return backBuffer; } }
 
         /// sets the value of the variables and properties
         /// Also runs the setupworld method
         public GameWorld(Graphics dc, Rectangle displayRectangle)
         {
-            this.dc = dc;
             backBuffer = BufferedGraphicsManager.Current.Allocate(dc, displayRectangle);
-            this.dc = backBuffer.Graphics;
+            GameWorld.dc = backBuffer.Graphics;
         }
         /// Runs the setup, instantiate lists etc. Puts all the information into the lists/arrays.
         public void SetupWorld()
         {
-            CSObject(new Vector2(0, 0));
+            for (int i = 0; i < 6; i++)
+            {
+                CreateWorkerThread(new Vector2(i * 25, i * 25));
+            }
         }
 
-        private void CSObject(Vector2 position)
+        private void CreateWorkerThread(Vector2 position)
+        {
+            Thread t = new Thread(() => new ThreadHandler(CSObject(position)));
+            t.IsBackground = true;
+            t.Start();
+        }
+
+        private GameObject CSObject(Vector2 position)
         {
             GameObject object1 = new GameObject(position);
             object1.AddComponent(new SpriteRender(object1, "Pic/spritesheet.png", 0));
@@ -44,6 +57,32 @@ namespace WindowsFormsApplication5
             ///And the order which they are to be added is: Animator -> Component, to make the animator work.
             object1.AddComponent(new Animator(object1));
             object1.AddComponent(new Worker(object1));
+
+            object1.LoadContent();
+            Objects.Add(object1);
+
+            return object1;
+        }
+
+        private void MakeCrystal(Vector2 position)
+        {
+            GameObject object1 = new GameObject(position);
+            object1.AddComponent(new SpriteRender(object1, "Pic/Minerals.png", 0));
+            object1.AddComponent(new Collider(object1));
+
+            object1.AddComponent(new Crystal(object1));
+
+            object1.LoadContent();
+            Objects.Add(object1);
+        }
+
+        private void MakeBank(Vector2 position)
+        {
+            GameObject object1 = new GameObject(position);
+            object1.AddComponent(new SpriteRender(object1, "Pic/Nexus.png", 0));
+            object1.AddComponent(new Collider(object1));
+
+            object1.AddComponent(new Crystal(object1));
 
             object1.LoadContent();
             Objects.Add(object1);
@@ -57,20 +96,12 @@ namespace WindowsFormsApplication5
             int milliseconds = timeSpan.Milliseconds > 0 ? timeSpan.Milliseconds : 1;
             deltaTime = 1000 / milliseconds;
             endTime = DateTime.Now;
-            
-            Update();
+
+            //Update() is run by the threads.
             Draw();
         }
 
-        private void Update()
-        {
-            foreach (GameObject go in Objects)
-            {
-                go.Update(deltaTime);
-            }
-        }
-
-        /// Draws everything in the game, and clears the screen
+        ///// Draws everything in the game, and clears the screen
         private void Draw()
         {
             dc.Clear(Color.White);
@@ -81,6 +112,7 @@ namespace WindowsFormsApplication5
             }
 
             backBuffer.Render();
+            
         }
     }
 }

@@ -12,6 +12,7 @@ namespace WindowsFormsApplication5
         Image sprite;
         float depth;
         Rectangle rectangle;
+        Transform transform;
 
         public Image Sprite { get { return sprite; } }
         public Rectangle Rectangle { get { return rectangle; } set { rectangle = value; } }
@@ -26,11 +27,11 @@ namespace WindowsFormsApplication5
         {
             this.sprite = Image.FromFile(spriteName);
             this.rectangle = new Rectangle(0, 0, sprite.Width, sprite.Height);
+            transform = (Transform)GameObject.GetComponent(Components.Transform);
         }
 
         public void Draw(Graphics dc)
         {
-            Transform transform = (Transform)GameObject.GetComponent(Components.Transform);
             dc.DrawImage(sprite, transform.Position.X, transform.Position.Y, rectangle, GraphicsUnit.Pixel);
         }
     }

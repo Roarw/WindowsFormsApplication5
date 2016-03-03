@@ -10,12 +10,16 @@ namespace WindowsFormsApplication5
     {
         SpriteRender spriteRender;
         List<Collider> otherColliders;
+        Transform transform;
 
         public Rectangle CollisionBox
         {
             get
             {
-                Transform transform = (Transform)gameObject.GetComponent(Components.Transform);
+                if (transform == null)
+                {
+                    transform = (Transform)gameObject.GetComponent(Components.Transform);
+                }
                 return new Rectangle(
                     (int)(transform.Position.X), (int)(transform.Position.Y),
                     spriteRender.Rectangle.Width, spriteRender.Rectangle.Height);
@@ -50,16 +54,16 @@ namespace WindowsFormsApplication5
                     {
                         if (!otherColliders.Contains(other))
                         {
-                            System.Diagnostics.Debug.WriteLine("Added collider");
                             otherColliders.Add(other);
+                            //System.Diagnostics.Debug.WriteLine("Added collider: " + otherColliders.Count);
                         }
                     }
                     else
                     {
                         if (otherColliders.Contains(other))
                         {
-                            System.Diagnostics.Debug.WriteLine("Removed collider");
                             otherColliders.Remove(other);
+                            //System.Diagnostics.Debug.WriteLine("Removed collider: " + otherColliders.Count);
                         }
                     }
                 }
