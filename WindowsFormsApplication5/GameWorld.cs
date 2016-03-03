@@ -40,8 +40,10 @@ namespace WindowsFormsApplication5
                 CreateWorkerThread(new Vector2(i * 25, i * 25));
             }
 
-            //MakeBank(new Vector2(0, 0));
-            //MakeCrystal(new Vector2(100, 0));
+            MakeBank(new Vector2(0, 0));
+            MakeCrystal(new Vector2(500, 0));
+            MakeCrystal(new Vector2(500, 50));
+            MakeCrystal(new Vector2(500, 100));
         }
 
         private void CreateWorkerThread(Vector2 position)
@@ -59,8 +61,8 @@ namespace WindowsFormsApplication5
 
             ///Animator and a component setting up animations are neccesary to make the Animator work.
             ///And the order which they are to be added is: Animator -> Component, to make the animator work.
-            //object1.AddComponent(new Animator(object1));
-            //object1.AddComponent(new Worker(object1));
+            object1.AddComponent(new Animator(object1));
+            object1.AddComponent(new Worker(object1));
 
             object1.LoadContent();
             Objects.Add(object1);
