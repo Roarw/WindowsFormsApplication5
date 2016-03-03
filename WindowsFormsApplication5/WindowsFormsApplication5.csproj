@@ -49,8 +49,10 @@
     <Compile Include="AnimatedThing.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="Animator.cs" />
+    <Compile Include="Bank.cs" />
     <Compile Include="Collider.cs" />
     <Compile Include="Component.cs" />
+    <Compile Include="Crystal.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
