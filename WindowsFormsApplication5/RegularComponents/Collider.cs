@@ -32,19 +32,20 @@ namespace WindowsFormsApplication5
             transform = (Transform)gameObject.GetComponent(Components.Transform);
             this.spriteRender = (SpriteRender)gameObject.GetComponent(Components.SpriteRender);
 
-            ///Make sure no two threads acces the Colliders at the same time.
             GameWorld.Colliders.Add(this);
         }
 
         public void Update(float deltaTime)
         {
-            CheckCollision();
+            ///The reason we copy the Colliders list is to avoid two threads accessing the same list, at the same time.
+            List<Collider> colliders = new List<Collider>(GameWorld.Colliders);
+            CheckCollision(colliders);
         }
 
-        private void CheckCollision()
+        private void CheckCollision(List<Collider> colliders)
         {
             ///Make sure no two threads acces the Colliders at the same time.
-            foreach (Collider other in GameWorld.Colliders)
+            foreach (Collider other in colliders)
             {
                 if (other != this)
                 {

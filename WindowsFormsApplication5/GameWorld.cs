@@ -43,11 +43,7 @@ namespace WindowsFormsApplication5
         {
             threads.Add(CreateBankThread(new Vector2(0, 30)));
             threads.Add(CreateCrystalThread(new Vector2(1200, 0)));
-
-            for (int i = 0; i < 10; i++)
-            {
-                threads.Add(CreateWorkerThread(new Vector2(100 + i * 5, 15 + i * 15)));
-            }
+            threads.Add(CreateWorkerThread(new Vector2(100 + 4 * 5, 15 + 4 * 15)));
             
             //Loads content.
             foreach (Thread t in threads)

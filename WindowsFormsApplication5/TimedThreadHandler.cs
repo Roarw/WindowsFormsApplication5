@@ -32,7 +32,7 @@ namespace WindowsFormsApplication5
                 Thread.Sleep(5);
 
                 timeAlive += 0.1f;
-                if (timeAlive > 1000)
+                if (timeAlive > 1200)
                 {
                     isAlive = false;
                     GameWorld.RemoveObject(gameObject);
