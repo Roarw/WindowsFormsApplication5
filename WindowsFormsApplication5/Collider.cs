@@ -19,12 +19,10 @@ namespace WindowsFormsApplication5
                 if (transform == null)
                 {
                     transform = (Transform)gameObject.GetComponent(Components.Transform);
-
-                    ///Transform should not be null anymore, but better safe than sorry.
-                    if (transform == null)
-                    {
-                        return new Rectangle(0, 0, 0, 0);
-                    }
+                }
+                if (transform == null || spriteRender == null)
+                {
+                    return new Rectangle(0, 0, 0, 0);
                 }
                 return new Rectangle(
                     (int)(transform.Position.X), (int)(transform.Position.Y),
