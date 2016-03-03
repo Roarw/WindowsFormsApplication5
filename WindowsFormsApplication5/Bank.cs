@@ -23,6 +23,7 @@ namespace WindowsFormsApplication5
         {
             if (balance > 100)
             {
+
                 GameWorld.CreateWorkerThread(new Vector2(0, 0)).Start();
                 balance -= 50;
             }

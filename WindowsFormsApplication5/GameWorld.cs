@@ -98,6 +98,7 @@ namespace WindowsFormsApplication5
 
             go.LoadContent();
             AddObject(go);
+
             return go;
         }
 

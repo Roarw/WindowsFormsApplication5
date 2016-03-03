@@ -31,6 +31,8 @@ namespace WindowsFormsApplication5
         {
             transform = (Transform)gameObject.GetComponent(Components.Transform);
             this.spriteRender = (SpriteRender)gameObject.GetComponent(Components.SpriteRender);
+
+            ///Make sure no two threads acces the Colliders at the same time.
             GameWorld.Colliders.Add(this);
         }
 
@@ -41,6 +43,7 @@ namespace WindowsFormsApplication5
 
         private void CheckCollision()
         {
+            ///Make sure no two threads acces the Colliders at the same time.
             foreach (Collider other in GameWorld.Colliders)
             {
                 if (other != this)
