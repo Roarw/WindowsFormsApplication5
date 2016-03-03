@@ -13,6 +13,19 @@ namespace WindowsFormsApplication5
         Transform transform;
         bool gold;
 
+        public bool Gold
+        {
+            get
+            {
+                return gold;
+            }
+
+            set
+            {
+                gold = value;
+            }
+        }
+
         public Worker(GameObject gameObject) : base(gameObject)
         {
 
@@ -28,26 +41,14 @@ namespace WindowsFormsApplication5
 
         public void Update(float deltaTime)
         {
-            if (transform.Position.X <= 100 && !gold)
+            if (!Gold)
             {
                 transform.Translate(new Vector2(1, 0));
             }
 
-            else if (transform.Position.X > 100 && transform.Position.X < 120 && !gold)
-            {
-                Thread.Sleep(1000);
-                gold = true;
-            }
-
-            else if (gold && transform.Position.X >= 0)
+            else if (Gold)
             {
                 transform.Translate(new Vector2(-1, 0));
-            }
-
-            else if (transform.Position.X < 0 && transform.Position.X > -20 && gold)
-            {
-                Thread.Sleep(1000);
-                gold = false;
             }
         }
 

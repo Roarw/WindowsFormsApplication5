@@ -17,12 +17,16 @@ namespace WindowsFormsApplication5
         private DateTime endTime;
         private static float deltaTime;
 
-        public static List<Collider> Colliders { get; } = new List<Collider>();
+        private static bool isLoaded;
+
+        public static List<Collider> Colliders {  get;  } = new List<Collider>();
         public static List<GameObject> Objects { get; } = new List<GameObject>();
 
         public static float DeltaTime { get { return deltaTime; } }
         public static Graphics DC { get { return dc; } }
         public static BufferedGraphics BackBuffer { get { return backBuffer; } }
+
+        public static bool IsLoaded { get  { return isLoaded; } }
 
         /// sets the value of the variables and properties
         /// Also runs the setupworld method
@@ -44,6 +48,13 @@ namespace WindowsFormsApplication5
             MakeCrystal(new Vector2(500, 0));
             MakeCrystal(new Vector2(500, 50));
             MakeCrystal(new Vector2(500, 100));
+
+            Thread.Sleep(1000);
+            foreach (GameObject o in Objects)
+            {
+                o.LoadContent();
+            }
+            isLoaded = true;
         }
 
         private void CreateWorkerThread(Vector2 position)
@@ -63,8 +74,7 @@ namespace WindowsFormsApplication5
             ///And the order which they are to be added is: Animator -> Component, to make the animator work.
             object1.AddComponent(new Animator(object1));
             object1.AddComponent(new Worker(object1));
-
-            object1.LoadContent();
+            
             Objects.Add(object1);
 
             return object1;
@@ -77,8 +87,7 @@ namespace WindowsFormsApplication5
             object1.AddComponent(new Collider(object1));
 
             object1.AddComponent(new Crystal(object1));
-
-            object1.LoadContent();
+            
             Objects.Add(object1);
         }
 
@@ -89,8 +98,7 @@ namespace WindowsFormsApplication5
             object1.AddComponent(new Collider(object1));
 
             object1.AddComponent(new Bank(object1));
-
-            object1.LoadContent();
+            
             Objects.Add(object1);
         }
 

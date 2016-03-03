@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WindowsFormsApplication5
 {
-    class Bank : Component
+    class Bank : Component, ICollisionEnter
     {
 
         public Bank(GameObject gameObject) : base(gameObject)
@@ -14,6 +14,14 @@ namespace WindowsFormsApplication5
 
         }
 
-        
+        public void OnCollisionEnter(Collider other)
+        {
+            Worker w = (Worker)other.GameObject.GetComponent(Components.Worker);
+
+            if (w != null)
+            {
+                w.Gold = false;
+            }
+        }
     }
 }

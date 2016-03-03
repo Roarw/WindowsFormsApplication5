@@ -16,14 +16,6 @@ namespace WindowsFormsApplication5
         {
             get
             {
-                if (transform == null)
-                {
-                    transform = (Transform)gameObject.GetComponent(Components.Transform);
-                }
-                if (transform == null || spriteRender == null)
-                {
-                    return new Rectangle(0, 0, 0, 0);
-                }
                 return new Rectangle(
                     (int)(transform.Position.X), (int)(transform.Position.Y),
                     spriteRender.Rectangle.Width, spriteRender.Rectangle.Height);
@@ -32,14 +24,14 @@ namespace WindowsFormsApplication5
 
         public Collider(GameObject gameObject) : base(gameObject)
         {
-            GameWorld.Colliders.Add(this);
-
             this.otherColliders = new List<Collider>();
         } 
 
         public void LoadContent()
         {
+            transform = (Transform)gameObject.GetComponent(Components.Transform);
             this.spriteRender = (SpriteRender)gameObject.GetComponent(Components.SpriteRender);
+            GameWorld.Colliders.Add(this);
         }
 
         public void Update(float deltaTime)
@@ -58,6 +50,7 @@ namespace WindowsFormsApplication5
                         if (!otherColliders.Contains(other))
                         {
                             otherColliders.Add(other);
+                            GameObject.OnCollisionEnter(other);
                             //System.Diagnostics.Debug.WriteLine("Added collider: " + otherColliders.Count);
                         }
                     }

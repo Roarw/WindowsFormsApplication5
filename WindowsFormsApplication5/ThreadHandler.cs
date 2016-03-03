@@ -23,6 +23,11 @@ namespace WindowsFormsApplication5
 
         private void Update()
         {
+            while (!GameWorld.IsLoaded)
+            {
+
+            }
+
             while (isAlive)
             {
                 gameObject.Update(GameWorld.DeltaTime);

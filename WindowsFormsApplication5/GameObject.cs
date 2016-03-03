@@ -11,10 +11,11 @@ namespace WindowsFormsApplication5
         Transform,
         SpriteRender,
         Animator,
-        Collider
+        Collider,
+        Worker
     }
 
-    class GameObject : Component, ILoadable, IUpdateable, IDrawable
+    class GameObject : Component, ILoadable, IUpdateable, IDrawable, ICollisionEnter
     {
         List<Component> componentList;
         bool isLoaded;
@@ -72,6 +73,17 @@ namespace WindowsFormsApplication5
                 if (component is IDrawable)
                 {
                     (component as IDrawable).Draw(dc);
+                }
+            }
+        }
+
+        public void OnCollisionEnter(Collider other)
+        {
+            foreach (Component component in componentList)
+            {
+                if (component is ICollisionEnter)
+                {
+                    (component as ICollisionEnter).OnCollisionEnter(other);
                 }
             }
         }
