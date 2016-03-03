@@ -20,6 +20,7 @@ namespace WindowsFormsApplication5
         private Font f;
 
         private static float deltaTime;
+        private static object thisLock = new object();
 
         public static List<Collider> Colliders { get; } = new List<Collider>();
         public static List<GameObject> Objects { get; } = new List<GameObject>();
@@ -40,19 +41,15 @@ namespace WindowsFormsApplication5
         /// Runs the setup, instantiate lists etc. Puts all the information into the lists/arrays.
         public void SetupWorld()
         {
-            CreateBankThread(new Vector2(0, 30));
-            CreateCrystalThread(new Vector2(1200, 0));
+            threads.Add(CreateBankThread(new Vector2(0, 30)));
+            threads.Add(CreateCrystalThread(new Vector2(1200, 0)));
 
             for (int i = 0; i < 10; i++)
             {
-                CreateWorkerThread(new Vector2(100 + i * 5, 15 + i * 15));
+                threads.Add(CreateWorkerThread(new Vector2(100 + i * 5, 15 + i * 15)));
             }
             
             //Loads content.
-            foreach (GameObject go in Objects)
-            {
-                go.LoadContent();
-            }
             foreach (Thread t in threads)
             {
                 t.Start();
@@ -60,28 +57,31 @@ namespace WindowsFormsApplication5
         }
         
         /// Below is our builder methods.
-        private void CreateWorkerThread(Vector2 position)
+        private Thread CreateWorkerThread(Vector2 position)
         {
             GameObject worker = WorkerBuilder(position);
-            Thread t = new Thread(() => new ThreadHandler(worker));
+            Thread t = new Thread(() => new TimedThreadHandler(worker));
+
             t.IsBackground = true;
-            threads.Add(t);
+            return t;
         }
 
-        private void CreateBankThread(Vector2 position)
+        private Thread CreateBankThread(Vector2 position)
         {
             GameObject bank = BankBuilder(position);
             Thread t = new Thread(() => new ThreadHandler(bank));
+
             t.IsBackground = true;
-            threads.Add(t);
+            return t;
         }
 
-        private void CreateCrystalThread(Vector2 position)
+        private Thread CreateCrystalThread(Vector2 position)
         {
             GameObject crystal = CrystalBuilder(position);
             Thread t = new Thread(() => new ThreadHandler(crystal));
+
             t.IsBackground = true;
-            threads.Add(t);
+            return t;
         }
 
         private GameObject WorkerBuilder(Vector2 position)
@@ -95,7 +95,8 @@ namespace WindowsFormsApplication5
             go.AddComponent(new Animator(go));
             go.AddComponent(new Worker(go));
 
-            Objects.Add(go);
+            go.LoadContent();
+            AddObject(go);
             return go;
         }
 
@@ -106,7 +107,8 @@ namespace WindowsFormsApplication5
             go.AddComponent(new Collider(go));
             go.AddComponent(new Crystal(go));
 
-            Objects.Add(go);
+            go.LoadContent();
+            AddObject(go);
             return go;
         }
 
@@ -117,7 +119,8 @@ namespace WindowsFormsApplication5
             go.AddComponent(new Collider(go));
             go.AddComponent(new Bank(go));
 
-            Objects.Add(go);
+            go.LoadContent();
+            AddObject(go);
             return go;
         }
 
@@ -150,6 +153,24 @@ namespace WindowsFormsApplication5
 
             backBuffer.Render();
             
+        }
+
+
+        /// Extra methods.
+        public static void RemoveObject(GameObject go)
+        {
+            lock (thisLock)
+            {
+                Objects.Remove(go);
+            }
+        }
+
+        public static void AddObject(GameObject go)
+        {
+            lock (thisLock)
+            {
+                Objects.Add(go);
+            }
         }
     }
 }

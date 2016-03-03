@@ -13,12 +13,11 @@ namespace WindowsFormsApplication5
         Transform transform;
         AnimationName animationName;
         
-        public int Gold { get; set; } = 0;
+        public float Gold { get; set; } = 0;
         public bool Wait { get; set; } = false;
 
         public Worker(GameObject gameObject) : base(gameObject)
         {
-
         }
 
         public void LoadContent()
@@ -61,7 +60,7 @@ namespace WindowsFormsApplication5
             Bank b = (Bank)other.GameObject.GetComponent(Components.Bank);
             Crystal c = (Crystal)other.GameObject.GetComponent(Components.Crystal);
 
-            if (b != null && Gold > 0 || c != null && Gold == 0)
+            if (b != null && Gold > 0 || c != null)
             {
                 Wait = true;
             }

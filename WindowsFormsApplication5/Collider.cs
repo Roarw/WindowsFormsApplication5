@@ -47,6 +47,8 @@ namespace WindowsFormsApplication5
                 {
                     if (IsCollidingWith(other))
                     {
+                        gameObject.OnCollisionStay(other);
+
                         if (!otherColliders.Contains(other))
                         {
                             otherColliders.Add(other);

@@ -10,9 +10,9 @@ namespace WindowsFormsApplication5
     class Bank : Component, ICollisionEnter
     {
         object thisLock = new object();
-        static int balance;
+        static float balance;
 
-        public static int Balace { get { return balance; } }
+        public static int Balace { get { return (int)balance; } }
 
         public Bank(GameObject gameObject) : base(gameObject)
         {
@@ -23,10 +23,9 @@ namespace WindowsFormsApplication5
         {
             Worker w = (Worker)other.GameObject.GetComponent(Components.Worker);
 
-            if (w != null && w.Gold > 0)
+            if (w != null)
             {
                 Monitor.Enter(thisLock);
-
                 
                 Thread.Sleep(1500);
                 balance += w.Gold;

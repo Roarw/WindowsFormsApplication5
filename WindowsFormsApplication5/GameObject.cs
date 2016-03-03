@@ -19,7 +19,7 @@ namespace WindowsFormsApplication5
         Crystal
     }
 
-    class GameObject : Component, ILoadable, IUpdateable, IDrawable, ICollisionEnter
+    class GameObject : Component, ILoadable, IUpdateable, IDrawable, ICollisionEnter, ICollisionStay
     {
         List<Component> componentList;
         bool isLoaded;
@@ -88,6 +88,17 @@ namespace WindowsFormsApplication5
                 if (component is ICollisionEnter)
                 {
                     (component as ICollisionEnter).OnCollisionEnter(other);
+                }
+            }
+        }
+
+        public void OnCollisionStay(Collider other)
+        {
+            foreach (Component component in componentList)
+            {
+                if (component is ICollisionStay)
+                {
+                    (component as ICollisionStay).OnCollisionStay(other);
                 }
             }
         }
