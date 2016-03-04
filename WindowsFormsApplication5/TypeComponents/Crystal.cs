@@ -24,8 +24,8 @@ namespace WindowsFormsApplication5
             {
                 lock(thisLock)
                 {
-                    Thread.Sleep(1000);
-                    w.Gold += 10;
+                    Thread.Sleep(500);
+                    w.Gold += 20;
                     w.Wait = false;
                 }
             }

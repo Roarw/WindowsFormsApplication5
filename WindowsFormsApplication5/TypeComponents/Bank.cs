@@ -9,14 +9,18 @@ namespace WindowsFormsApplication5
 {
     class Bank : Component, ICollisionEnter, IUpdateable
     {
+        int bunkerPosition;
+
+        static float balance;
+
         Random random = new Random();
         object thisLock = new object();
-        static float balance;
 
         public static int Balace { get { return (int)balance; } }
 
         public Bank(GameObject gameObject) : base(gameObject)
         {
+            bunkerPosition = 0;
             balance = 0;
         }
 
@@ -25,12 +29,14 @@ namespace WindowsFormsApplication5
             /// The worker causing the bank thread to sleep gives time for the gold to raise to 70,
             /// before 50 gold is spent on a worker. Thus giving a bunker a chance to spawn.
             /// This can only occur because the Collider's update is called before the Bank's update.
-            if (balance > 70)
+            if (balance > 70 && GameWorld.BunkersCount < 8)
             {
-                System.Diagnostics.Debug.WriteLine("Make a bunker.");
+                GameObject bunker = GameWorld.BunkerBuilder(new Vector2(bunkerPosition, 250));
+                GameWorld.AddToUpdateList(bunker);
+                bunkerPosition += 150;
                 balance -= 70;
             }
-            if (balance > 50)
+            if (balance > 50 && GameWorld.ObjectsCount < 17)
             {
                 int i = random.Next(10);
                 GameWorld.CreateWorkerThread(new Vector2(120, 15 + i * 15)).Start();

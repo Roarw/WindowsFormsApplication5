@@ -100,6 +100,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Pic\Bunker.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Pic\Crystal.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

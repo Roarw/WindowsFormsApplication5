@@ -19,26 +19,33 @@ namespace WindowsFormsApplication5
         private Brush b;
         private Font f;
 
+        private static List<GameObject> objects;
+        private static List<GameObject> bunkers;
         private static float deltaTime;
-        private static object thisLock = new object();
+        private static object objectsLock = new object();
+        private static object bunkerLock = new object();
 
         public static List<Collider> Colliders { get; } = new List<Collider>();
-        public static List<GameObject> Objects { get; } = new List<GameObject>();
+        public static object collidersLock = new object();
 
+        public static int ObjectsCount { get { return objects.Count; } }
+        public static int BunkersCount { get { return bunkers.Count; } }
         public static float DeltaTime { get { return deltaTime; } }
 
         /// sets the value of the variables and properties
-        /// Also runs the setupworld method
         public GameWorld(Graphics dc, Rectangle displayRectangle)
         {
             backBuffer = BufferedGraphicsManager.Current.Allocate(dc, displayRectangle);
             this.dc = backBuffer.Graphics;
+
+            objects = new List<GameObject>();
             threads = new List<Thread>();
             b = Brushes.Gold;
             f = new Font("Arial", 16);
+            bunkers = new List<GameObject>();
         }
 
-        /// Runs the setup, instantiate lists etc. Puts all the information into the lists/arrays.
+        /// Runs the setup and puts all the information into the lists/arrays.
         public void SetupWorld()
         {
             threads.Add(CreateBankThread(new Vector2(0, 30)));
@@ -122,6 +129,16 @@ namespace WindowsFormsApplication5
             return go;
         }
 
+        //Bunkerbuilder is used by the bank to build bunkers.
+        public static GameObject BunkerBuilder(Vector2 position)
+        {
+            GameObject go = new GameObject(position);
+            go.AddComponent(new SpriteRender(go, "Pic/Bunker.png", 0));
+
+            go.LoadContent();
+            return go;
+        }
+
 
 
         /// Keeps track of time and runs the draw method.
@@ -133,8 +150,17 @@ namespace WindowsFormsApplication5
             deltaTime = 1000 / milliseconds;
             endTime = DateTime.Now;
 
-            //Update(); is called by ThreadHandler.
+            Update();
             Draw();
+        }
+
+        /// Updates everything that is not in a thread (bunkers).
+        private void Update()
+        {
+            foreach (GameObject go in bunkers)
+            {
+                go.Update(deltaTime);
+            }
         }
 
         /// Draws everything in the game, and clears the screen
@@ -142,9 +168,17 @@ namespace WindowsFormsApplication5
         {
             dc.Clear(Color.DarkOliveGreen);
 
-            lock (thisLock)
+            lock (bunkerLock)
+            {
+                foreach (GameObject go in bunkers)
+                {
+                    go.Draw(dc);
+                }
+            }
+
+            lock (objectsLock)
             { 
-                foreach (GameObject go in Objects)
+                foreach (GameObject go in objects)
                 {
                     go.Draw(dc);
                 }
@@ -153,24 +187,50 @@ namespace WindowsFormsApplication5
             dc.DrawString(Bank.Balace + "", f, b, 0, 0);
 
             backBuffer.Render();
-            
         }
 
 
         /// Extra methods.
+        //RemoveObject and AddObject is used to add/remove thread objects from Objects.
         public static void RemoveObject(GameObject go)
         {
-            lock (thisLock)
+            lock (objectsLock)
             {
-                Objects.Remove(go);
+                objects.Remove(go);
             }
         }
 
         public static void AddObject(GameObject go)
         {
-            lock (thisLock)
+            lock (objectsLock)
             {
-                Objects.Add(go);
+                objects.Add(go);
+            }
+        }
+
+        //RemoveCollider and AddCollider is used to add/remove collliders from Colliders.
+        public static void RemoveCollider(Collider collider)
+        {
+            lock (collidersLock)
+            {
+                Colliders.Remove(collider);
+            }
+        }
+
+        public static void AddCollider(Collider collider)
+        {
+            lock (collidersLock)
+            {
+                Colliders.Add(collider);
+            }
+        }
+
+        //Used to add a bunkers.
+        public static void AddToUpdateList(GameObject go)
+        {
+            lock (bunkerLock)
+            {
+                bunkers.Add(go);
             }
         }
     }
